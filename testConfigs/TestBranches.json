@@ -9,6 +9,11 @@
       "name": "Battle 1.20.1",
       "url": "https://github.com/Legacy-Edition-Minigames/Minigames/tree/battle-1.20.1",
       "desc": "Old version of Battle for 1.20.1"
+    },
+    {
+      "name": "April Fools 2024",
+      "url": "https://github.com/Legacy-Edition-Minigames/Minigames/tree/battle/2024/battle",
+      "desc": "April Fools event from 2024 [1.20.4]"
     }
   ]
 }
