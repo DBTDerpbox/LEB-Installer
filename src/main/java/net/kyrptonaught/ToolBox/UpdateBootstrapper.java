@@ -5,8 +5,10 @@ import com.google.gson.JsonObject;
 import net.kyrptonaught.ToolBox.IO.FileHelper;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.InputStreamReader;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -68,18 +70,12 @@ public class UpdateBootstrapper {
     }
 
     private static void launchJar(List<String> args) {
-        String[] launchCommands = {"java", "-jar", ".toolbox/launch.jar"};
-
-        args.addAll(0, List.of(launchCommands));
-
         try {
-            new ProcessBuilder(args)
-                    .directory(new File(System.getProperty("user.dir")))
-                    .inheritIO()
-                    .start()
-                    .waitFor();
-
-            System.exit(0);
+            URLClassLoader child = new URLClassLoader(new URL[]{Paths.get(".toolbox/launch.jar").toUri().toURL()}, Main.class.getClassLoader());
+            Class<?> classToLoad = Class.forName(Main.class.getName(), true, child);
+            Method method = classToLoad.getDeclaredMethod("main", String[].class);
+            Object instance = classToLoad.newInstance();
+            method.invoke(instance, (Object) args.toArray(String[]::new));
         } catch (Exception e) {
             e.printStackTrace();
         }
