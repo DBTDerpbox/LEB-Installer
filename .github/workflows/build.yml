@@ -31,7 +31,7 @@ jobs:
         run: java -jar launch4j/launch4j.jar launch4jConfig.xml
 
       - name: capture build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Artifacts
           path: target/dist/
