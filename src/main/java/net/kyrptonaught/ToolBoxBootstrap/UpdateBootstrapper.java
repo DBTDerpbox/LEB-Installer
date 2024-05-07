@@ -11,8 +11,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 
 public class UpdateBootstrapper {
     public static BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
@@ -66,17 +64,17 @@ public class UpdateBootstrapper {
     }
 
     public static void runToolbox(String[] args) {
-        launchJar(getToolboxRunArgs(args));
+        launchJar(args);
     }
 
-    private static void launchJar(List<String> args) {
+    private static void launchJar(String[] args) {
         try {
             URL[] urls = {new URL("jar:file:" + ".toolbox/launch.jar" + "!/")};
             URLClassLoader child = new URLClassLoader(urls, Main.class.getClassLoader());
             Class<?> classToLoad = child.loadClass("net.kyrptonaught.ToolBox.Menu");
             Method method = classToLoad.getDeclaredMethod("startStateMachine", String[].class);
             Object instance = classToLoad.newInstance();
-            method.invoke(instance, (Object) args.toArray(String[]::new));
+            method.invoke(instance, (Object) args);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -108,12 +106,5 @@ public class UpdateBootstrapper {
         } else {
             return "0.0";
         }
-    }
-
-    private static List<String> getToolboxRunArgs(String[] args) {
-        List<String> arguments = new ArrayList<>();
-        arguments.add("--runToolbox");
-        arguments.addAll(List.of(args));
-        return arguments;
     }
 }
