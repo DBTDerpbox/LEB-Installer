@@ -41,13 +41,13 @@ public class UpdateBootstrapper {
                 for (int i = 0; i < assets.size(); i++) {
                     JsonObject obj = assets.get(i).getAsJsonObject();
 
-                    String[] fileName = obj.get("name").getAsString().split("\\.");
+                    String fileName = obj.get("name").getAsString();
 
-                    String fileExtension = fileName[fileName.length - 1];
-
-                    FileHelper.download(obj.get("browser_download_url").getAsString(), Paths.get(".toolbox").resolve("launch." + fileExtension));
-
-                    FileHelper.writeFile(Paths.get(".toolbox/VERSION"), response.get(0).getAsJsonObject().get("tag_name").getAsString());
+                    if (fileName.startsWith("Toolbox2.0_noupdater")) {
+                        FileHelper.download(obj.get("browser_download_url").getAsString(), Paths.get(".toolbox").resolve("launch.jar"));
+                        FileHelper.writeFile(Paths.get(".toolbox/VERSION"), response.get(0).getAsJsonObject().get("tag_name").getAsString());
+                        break;
+                    }
                 }
             }
         } catch (Exception e) {
