@@ -1,4 +1,6 @@
-package net.kyrptonaught.ToolBox.IO;
+package net.kyrptonaught.ToolBoxBootstrap.IO;
+
+import net.kyrptonaught.ToolBoxBootstrap.Main;
 
 import java.io.*;
 import java.math.BigInteger;
@@ -44,7 +46,7 @@ public class FileHelper {
     }
 
     public static <T> T download(String fileURL, Class<T> clazz) {
-        return ConfigLoader.gson.fromJson(download(fileURL), clazz);
+        return Main.gson.fromJson(download(fileURL), clazz);
     }
 
     public static List<String> unzipFile(Path zipFile, Path unzipPath, boolean skipTB) {

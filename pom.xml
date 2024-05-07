@@ -45,7 +45,7 @@
                     <appendAssemblyId>false</appendAssemblyId>
                     <archive>
                         <manifest>
-                            <mainClass>net.kyrptonaught.ToolBox.Main</mainClass>
+                            <mainClass>net.kyrptonaught.ToolBoxBootstrap.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

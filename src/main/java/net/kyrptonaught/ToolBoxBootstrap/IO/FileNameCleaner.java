@@ -1,4 +1,4 @@
-package net.kyrptonaught.ToolBox.IO;
+package net.kyrptonaught.ToolBoxBootstrap.IO;
 
 import java.nio.file.Path;
 import java.util.Arrays;

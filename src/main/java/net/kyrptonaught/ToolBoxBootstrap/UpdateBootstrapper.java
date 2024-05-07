@@ -1,8 +1,8 @@
-package net.kyrptonaught.ToolBox;
+package net.kyrptonaught.ToolBoxBootstrap;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import net.kyrptonaught.ToolBox.IO.FileHelper;
+import net.kyrptonaught.ToolBoxBootstrap.IO.FileHelper;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -33,7 +33,7 @@ public class UpdateBootstrapper {
     }
 
     public static void installUpdate() {
-        Menu.clearConsole();
+        Main.clearConsole();
         System.out.println("Installing Toolbox update...");
         try {
             JsonArray response = FileHelper.download(URL.replace("//github.com/", "//api.github.com/repos/"), JsonArray.class);
@@ -62,18 +62,19 @@ public class UpdateBootstrapper {
         System.out.println("Done. Relaunching toolbox...");
         System.out.println();
 
-        Menu.pressEnterToCont(input);
+        Main.pressEnterToCont(input);
     }
 
-    public static void runToolbox() {
-        launchJar(getToolboxRunArgs());
+    public static void runToolbox(String[] args) {
+        launchJar(getToolboxRunArgs(args));
     }
 
     private static void launchJar(List<String> args) {
         try {
-            URLClassLoader child = new URLClassLoader(new URL[]{Paths.get(".toolbox/launch.jar").toUri().toURL()}, Main.class.getClassLoader());
-            Class<?> classToLoad = Class.forName(Main.class.getName(), true, child);
-            Method method = classToLoad.getDeclaredMethod("main", String[].class);
+            URL[] urls = {new URL("jar:file:" + ".toolbox/launch.jar" + "!/")};
+            URLClassLoader child = new URLClassLoader(urls, Main.class.getClassLoader());
+            Class<?> classToLoad = child.loadClass("net.kyrptonaught.ToolBox.Menu");
+            Method method = classToLoad.getDeclaredMethod("startStateMachine", String[].class);
             Object instance = classToLoad.newInstance();
             method.invoke(instance, (Object) args.toArray(String[]::new));
         } catch (Exception e) {
@@ -109,10 +110,10 @@ public class UpdateBootstrapper {
         }
     }
 
-    private static List<String> getToolboxRunArgs() {
+    private static List<String> getToolboxRunArgs(String[] args) {
         List<String> arguments = new ArrayList<>();
         arguments.add("--runToolbox");
-        arguments.addAll(List.of(CMDArgsParser.args));
+        arguments.addAll(List.of(args));
         return arguments;
     }
 }
