@@ -6,14 +6,11 @@ import net.kyrptonaught.ToolBox.configs.BranchesConfig;
 import net.kyrptonaught.ToolBox.holders.InstalledServerInfo;
 import net.kyrptonaught.ToolBox.holders.RunningServer;
 
-import java.awt.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Stream;
@@ -493,92 +490,6 @@ public class Menu {
             System.out.println("EULA accepted.");
         }
         System.out.println();
-    }
-
-    public static void checkForUpdate(BufferedReader input) {
-        System.out.println("Checking for Toolbox Updates...");
-        String installedVersion = UpdateBootstrapper.getInstalledVersion();
-        if (installedVersion.equals("0.0")) {
-            System.out.println("Toolbox is missing files require to run. The required files will be downloaded automatically.");
-            System.out.println();
-            System.out.println("1. View Latest Release");
-            System.out.println("2. Download");
-            System.out.println("0. Exit");
-            System.out.println();
-            System.out.print("Select Option: ");
-
-            if(CMDArgsParser.autoUpdateToolbox()){
-                System.out.println("Auto Accepting update...");
-                UpdateBootstrapper.installUpdate();
-                UpdateBootstrapper.runToolbox();
-                return ;
-            }
-
-            int selection = readInt(input);
-            if (selection == 1) {
-                if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
-                    try {
-                        Desktop.getDesktop().browse(new URI(UpdateBootstrapper.URL));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-                clearConsole();
-                checkForUpdate(input);
-            } else if (selection == 2) {
-                System.out.println("Installing latest version");
-                UpdateBootstrapper.installUpdate();
-                UpdateBootstrapper.runToolbox();
-                return;
-            } else if (selection == 0) {
-                System.out.println("Exiting...");
-                System.exit(0);
-            }
-        }
-
-        String update = UpdateBootstrapper.isUpdateAvailable();
-        if (update != null) {
-            Path versionFile = Paths.get(".toolbox/VERSION");
-            if (FileHelper.exists(versionFile)) {
-                System.out.println("Current version: Toolbox 2.0 v" + installedVersion);
-                System.out.println();
-                System.out.println("An update for Toolbox is available: v" + update);
-                System.out.println();
-                System.out.println("1. View Release");
-                System.out.println("2. Download Update");
-                System.out.println("0. Ignore");
-                System.out.println();
-                System.out.print("Select Option: ");
-
-                if(CMDArgsParser.autoUpdateToolbox()){
-                    System.out.println("Auto Accepting update...");
-                    UpdateBootstrapper.installUpdate();
-                    UpdateBootstrapper.runToolbox();
-                    return ;
-                }
-
-                int selection = readInt(input);
-                if (selection == 1) {
-                    if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
-                        try {
-                            Desktop.getDesktop().browse(new URI(UpdateBootstrapper.URL));
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    clearConsole();
-                    checkForUpdate(input);
-
-                } else if (selection == 2) {
-                    System.out.println("Installing update");
-                    UpdateBootstrapper.installUpdate();
-                    UpdateBootstrapper.runToolbox();
-                    return;
-                }
-            }
-        }
-        System.out.println("Already up to date");
-        UpdateBootstrapper.runToolbox();
     }
 
     public static void clearConsole() {
