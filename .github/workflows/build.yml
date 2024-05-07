@@ -22,7 +22,7 @@ jobs:
         run: mvn package
 
       - name: l4j dl
-        run:  curl -o l4j.tgz https://cytranet.dl.sourceforge.net/project/launch4j/launch4j-3/3.50/launch4j-3.50-linux-x64.tgz
+        run:  curl -o l4j.tgz https://gigenet.dl.sourceforge.net/project/launch4j/launch4j-3/3.50/launch4j-3.50-linux-x64.tgz?viasf=1
 
       - name: l4j unzip
         run: tar -xzf l4j.tgz
