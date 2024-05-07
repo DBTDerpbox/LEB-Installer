@@ -43,7 +43,7 @@ public class UpdateBootstrapper {
 
                     String fileName = obj.get("name").getAsString();
 
-                    if (fileName.startsWith("Toolbox2.0_noupdater")) {
+                    if (fileName.equals("Toolbox2.0_noupdater.jar")) {
                         FileHelper.download(obj.get("browser_download_url").getAsString(), Paths.get(".toolbox").resolve("launch.jar"));
                         FileHelper.writeFile(Paths.get(".toolbox/VERSION"), response.get(0).getAsJsonObject().get("tag_name").getAsString());
                         break;
