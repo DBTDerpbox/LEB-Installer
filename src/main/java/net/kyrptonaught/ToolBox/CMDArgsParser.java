@@ -6,7 +6,7 @@ import net.kyrptonaught.ToolBox.configs.BranchesConfig;
 
 public class CMDArgsParser {
 
-    private static String[] args;
+    public static String[] args;
 
     public static void setArgs(String[] args) {
         CMDArgsParser.args = args;
@@ -38,6 +38,8 @@ public class CMDArgsParser {
         }
         return null;
     }
+
+    public static boolean autoUpdateToolbox() {return containsArgs("--autoUpdateToolbox");}
 
     public static boolean updateServer() {
         return containsArgs("--updateServer");

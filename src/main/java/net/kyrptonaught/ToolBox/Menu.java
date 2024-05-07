@@ -19,32 +19,26 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class Menu {
-    public static boolean SKIP_SHUTDOWN_TASKS = false;
-
-
     public static State state;
     public static Object stateData;
 
     public static void startStateMachine(String[] args) {
-        CMDArgsParser.setArgs(args);
-
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            if(!SKIP_SHUTDOWN_TASKS) {
-                System.out.println();
-                System.out.println();
-                System.out.println("SHUTTING DOWN");
-                System.out.println("Attempting to stop running servers");
-                ServerRunner.exit();
-            }
+            System.out.println();
+            System.out.println();
+            System.out.println("SHUTTING DOWN");
+            System.out.println("Attempting to stop running servers");
+            ServerRunner.exit();
         }));
         BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+
+        CMDArgsParser.setArgs(args);
 
         setState(CMDArgsParser.skipSplash() ? State.MENU : State.SPLASH);
 
         Automation.run();
 
         clearConsole();
-        //checkForUpdate(input);
 
         while (true) {
             clearConsole();
@@ -503,26 +497,28 @@ public class Menu {
 
     public static void checkForUpdate(BufferedReader input) {
         System.out.println("Checking for Toolbox Updates...");
-        System.out.println();
-        System.out.println("Current version: Toolbox 2.0 v" + UpdateChecker.version);
-
-        String update = UpdateChecker.isUpdateAvailable();
-        if (update != null) {
-            System.out.println("An update for Toolbox is available: v" + update);
+        String installedVersion = UpdateBootstrapper.getInstalledVersion();
+        if (installedVersion.equals("0.0")) {
+            System.out.println("Toolbox is missing files require to run. The required files will be downloaded automatically.");
             System.out.println();
-            System.out.println("1. View Release");
-            System.out.println("2. Download Update");
-
-            System.out.println("0. Ignore");
-
+            System.out.println("1. View Latest Release");
+            System.out.println("2. Download");
+            System.out.println("0. Exit");
             System.out.println();
             System.out.print("Select Option: ");
+
+            if(CMDArgsParser.autoUpdateToolbox()){
+                System.out.println("Auto Accepting update...");
+                UpdateBootstrapper.installUpdate();
+                UpdateBootstrapper.runToolbox();
+                return ;
+            }
 
             int selection = readInt(input);
             if (selection == 1) {
                 if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
                     try {
-                        Desktop.getDesktop().browse(new URI(UpdateChecker.URL));
+                        Desktop.getDesktop().browse(new URI(UpdateBootstrapper.URL));
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -530,14 +526,59 @@ public class Menu {
                 clearConsole();
                 checkForUpdate(input);
             } else if (selection == 2) {
-                System.out.println("Installing update");
-                UpdateChecker.prepUpdate();
-                System.out.println();
-                System.out.println("Update installed. Closing Toolbox. Please ");
-                pressEnterToCont(input);
-                setState(State.EXIT);
+                System.out.println("Installing latest version");
+                UpdateBootstrapper.installUpdate();
+                UpdateBootstrapper.runToolbox();
+                return;
+            } else if (selection == 0) {
+                System.out.println("Exiting...");
+                System.exit(0);
             }
         }
+
+        String update = UpdateBootstrapper.isUpdateAvailable();
+        if (update != null) {
+            Path versionFile = Paths.get(".toolbox/VERSION");
+            if (FileHelper.exists(versionFile)) {
+                System.out.println("Current version: Toolbox 2.0 v" + installedVersion);
+                System.out.println();
+                System.out.println("An update for Toolbox is available: v" + update);
+                System.out.println();
+                System.out.println("1. View Release");
+                System.out.println("2. Download Update");
+                System.out.println("0. Ignore");
+                System.out.println();
+                System.out.print("Select Option: ");
+
+                if(CMDArgsParser.autoUpdateToolbox()){
+                    System.out.println("Auto Accepting update...");
+                    UpdateBootstrapper.installUpdate();
+                    UpdateBootstrapper.runToolbox();
+                    return ;
+                }
+
+                int selection = readInt(input);
+                if (selection == 1) {
+                    if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+                        try {
+                            Desktop.getDesktop().browse(new URI(UpdateBootstrapper.URL));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    clearConsole();
+                    checkForUpdate(input);
+
+                } else if (selection == 2) {
+                    System.out.println("Installing update");
+                    UpdateBootstrapper.installUpdate();
+                    UpdateBootstrapper.runToolbox();
+                    return;
+                }
+            }
+        }
+        System.out.println("Already up to date");
+        UpdateBootstrapper.runToolbox();
     }
 
     public static void clearConsole() {
