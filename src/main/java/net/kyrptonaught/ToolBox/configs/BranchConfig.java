@@ -7,6 +7,8 @@ public class BranchConfig {
 
     public Dependency[] dependencies;
 
+    public int config_version = 1;
+
     public static class Dependency {
         public String name;
         public String displayName;
