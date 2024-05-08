@@ -83,7 +83,7 @@ public class Menu {
 
         List<InstalledServerInfo> installedServers = Installer.detectInstalls();
         List<RunningServer> runningServers = ServerRunner.getRunningServers();
-        BranchesConfig branches = ConfigLoader.parseBranches(FileHelper.download("https://raw.githubusercontent.com/Legacy-Edition-Minigames/ToolBox/java/testConfigs/TestBranches.json"));
+        BranchesConfig branches = ConfigLoader.parseBranches(FileHelper.download("https://raw.githubusercontent.com/Legacy-Edition-Minigames/ToolBox/java/DEFAULT_BRANCHES.json"));
 
         HashMap<Integer, Runnable> options = new HashMap<>();
 
