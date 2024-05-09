@@ -378,7 +378,7 @@ public class Menu {
         System.out.println("""
                 Choose how to import:
                                 
-                1. Discover in /install folder
+                1. Discover in /installs folder
                 2. Select from local file system
                 3. Download from URL
                                 
