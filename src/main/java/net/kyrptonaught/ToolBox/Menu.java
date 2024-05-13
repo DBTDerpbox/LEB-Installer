@@ -219,16 +219,23 @@ public class Menu {
             System.out.println();
             checkEula(input, serverInfo);
         } else if (selectedAction == 6) {
-            String newName = askServerName(input, serverInfo.getName());
+            String newName = askServerName(input, serverInfo.getName(), true);
+            System.out.println();
 
-            System.out.println();
-            System.out.println("Renaming to " + newName);
-            FileHelper.renameDirectory(serverInfo.getPath(), Path.of("installs/" + newName));
-            serverInfo.setName(newName);
-            serverInfo.setPath();
-            Installer.saveInstalledServerInfo(serverInfo);
-            System.out.println("Complete");
-            System.out.println();
+            if (newName.equals(serverInfo.getName())) {
+                System.out.println("Same name entered, canceling");
+                System.out.println();
+                pressEnterToCont(input);
+            } else {
+                System.out.println("Renaming to " + newName);
+                FileHelper.renameDirectory(serverInfo.getPath(), Path.of("installs/" + newName));
+                serverInfo.setName(newName);
+                serverInfo.setPath();
+                Installer.saveInstalledServerInfo(serverInfo);
+                System.out.println("Complete");
+                System.out.println();
+                pressEnterToCont(input);
+            }
         } else if (selectedAction == 7) {
             System.out.println("This server and all data associated with it will be permanently deleted before being reinstalled.");
             System.out.println("This is irreversible.");
@@ -343,7 +350,7 @@ public class Menu {
         System.out.println("Configuring server");
         System.out.println();
 
-        String enteredServerName = askServerName(input, branch.name);
+        String enteredServerName = askServerName(input, branch.name, false);
         System.out.println();
 
         System.out.println("How much RAM do you want to allocate to the server?");
@@ -451,7 +458,7 @@ public class Menu {
         }
     }
 
-    public static String askServerName(BufferedReader input, String defaultName) {
+    public static String askServerName(BufferedReader input, String defaultName, boolean renaming) {
         System.out.println("Please enter a name for this server, or leave blank for default (" + defaultName + "): ");
         System.out.println();
         System.out.print("Server Name: ");
@@ -459,11 +466,15 @@ public class Menu {
         if (enteredServerName.isBlank()) enteredServerName = defaultName;
         enteredServerName = FileNameCleaner.cleanFileName(enteredServerName);
 
+        if (renaming && enteredServerName.equals(defaultName))
+            return enteredServerName;
+
         if (getServerFromName(enteredServerName) != null) {
             System.out.println("A server with that name already exists.");
             System.out.println();
-            return askServerName(input, defaultName);
+            return askServerName(input, defaultName, renaming);
         }
+
         return enteredServerName;
     }
 
